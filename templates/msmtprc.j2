@@ -1,0 +1,25 @@
+{{ ansible_managed | comment }}
+
+{% if msmtp_default_config is defined %}
+# Set default values for all following accounts.
+defaults
+{% for key, value in msmtp_default_config.items() %}
+{% if value is boolean %}
+{{ key }} {{ value | ternary('on', 'off') }}
+{% else %}
+{{ key }} {{ value }}
+{% endif %}
+{% endfor %}
+
+{% endif %}
+{% for account, settings in (msmtp_accounts | default([])).items() %}
+account {{ account }}
+{% for key, value in settings.items() %}
+{% if value is boolean %}
+{{ key }} {{ value | ternary('on', 'off') }}
+{% else %}
+{{ key }} {{ value }}
+{% endif %}
+{% endfor %}
+
+{% endfor %}

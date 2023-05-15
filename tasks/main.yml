@@ -1,0 +1,27 @@
+---
+- name: 'Determine msmtp package variant'
+  set_fact:
+    msmtp_package: "{{ (msmtp_default_config['tls'] | default(false) or msmtp_accounts.values() | map(attribute='tls') | select | length > 0) | ternary('msmtp', 'msmtp-nossl') }}"
+  when: "msmtp_package is not defined"
+
+- name: 'Install msmtp'
+  community.general.opkg:
+    name: "{{ msmtp_package }}"
+    state: installed
+
+- name: 'Configure msmtp'
+  ansible.builtin.template:
+    dest: '/etc/msmtprc'
+    src: 'msmtprc.j2'
+    owner: root
+    group: root
+    mode: '0640'
+  no_log: "{{ msmtp_accounts.values() | map(attribute='password') | select | length > 0 }}"
+
+- name: 'Symlink sendmail to msmtp'
+  ansible.builtin.file:
+    path: '/usr/sbin/sendmail'
+    state: link
+    owner: root
+    group: root
+    src: '/usr/bin/msmtp'
