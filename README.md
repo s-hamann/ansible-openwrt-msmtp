@@ -27,6 +27,9 @@ Role Variables
   Usually either `msmtp` or `msmtp-nossl`.
   Defaults to `msmtp` if TLS is enabled in `msmtp_default_config` or `msmtp_accounts` and `msmtp-nossl` otherwise.
 
+Dependencies
+------------
+
 This role does not depend on any specific roles.
 
 Example Configuration
