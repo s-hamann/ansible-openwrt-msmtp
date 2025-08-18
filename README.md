@@ -26,6 +26,11 @@ Role Variables
   The name of the msmtp package to install.
   Usually either `msmtp` or `msmtp-nossl`.
   Defaults to `msmtp` if TLS is enabled in `msmtp_default_config` or `msmtp_accounts` and `msmtp-nossl` otherwise.
+* `msmtp_group`  
+  The name of a system group to have read access to the msmtp config file.
+  Only users in this group can use msmtp.
+  This role creates the group if it does not exist on the target system.
+  Optional.
 
 Dependencies
 ------------

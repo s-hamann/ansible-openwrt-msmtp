@@ -9,12 +9,19 @@
     name: "{{ msmtp_package }}"
     state: installed
 
+- name: 'Create user group'
+  ansible.builtin.group:
+    name: "{{ msmtp_group }}"
+    system: true
+    state: present
+  when: "msmtp_group is defined"
+
 - name: 'Configure msmtp'
   ansible.builtin.template:
     dest: '/etc/msmtprc'
     src: 'msmtprc.j2'
     owner: root
-    group: root
+    group: "{{ msmtp_group | default('root') }}"
     mode: '0640'
   no_log: "{{ msmtp_accounts.values() | map(attribute='password') | select | length > 0 }}"
 
