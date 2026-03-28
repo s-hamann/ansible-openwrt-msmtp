@@ -1,23 +1,30 @@
 ---
 - name: 'Determine msmtp package variant'
-  set_fact:
+  ansible.builtin.set_fact:
     msmtp_package: "{{ (msmtp_default_config['tls'] | default(false) or msmtp_accounts.values() | map(attribute='tls') | select | length > 0) | ternary('msmtp', 'msmtp-nossl') }}"
   when: "msmtp_package is not defined"
 
 - name: 'Install msmtp'
-  community.general.opkg:
+  community.openwrt.apk:
     name: "{{ msmtp_package }}"
     state: installed
+  when: "ansible_facts['pkg_mgr'] == 'apk'"
+
+- name: 'Install msmtp'
+  community.openwrt.opkg:
+    name: "{{ msmtp_package }}"
+    state: installed
+  when: "ansible_facts['pkg_mgr'] == 'opkg'"
 
 - name: 'Create user group'
-  ansible.builtin.group:
+  community.openwrt.group:
     name: "{{ msmtp_group }}"
     system: true
     state: present
   when: "msmtp_group is defined"
 
 - name: 'Configure msmtp'
-  ansible.builtin.template:
+  community.openwrt.template:
     dest: '/etc/msmtprc'
     src: 'msmtprc.j2'
     owner: root
@@ -26,7 +33,7 @@
   no_log: "{{ msmtp_accounts.values() | map(attribute='password') | select | length > 0 }}"
 
 - name: 'Symlink sendmail to msmtp'
-  ansible.builtin.file:
+  community.openwrt.file:
     path: '/usr/sbin/sendmail'
     state: link
     owner: root

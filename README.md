@@ -6,9 +6,8 @@ This role installs and configures [msmtp](https://marlam.de/msmtp/) on [OpenWrt]
 Requirements
 ------------
 
-This role has no special requirements on the controller.
-
-It does, however, require a working [Python](https://www.python.org/) installation on the target system or [gekmihesg's Ansible library for OpenWrt](https://github.com/gekmihesg/ansible-openwrt) on the Ansible controller.
+This role requires the [community.openwrt](https://github.com/ansible-collections/community.openwrt) collection on the Ansible controller.
+As it exclusively uses modules from this collection, Python is *not* required on the target system.
 
 Role Variables
 --------------
